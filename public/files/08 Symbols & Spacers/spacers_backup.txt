@@ -1,0 +1,18 @@
+INVISIBLE SPACERS (backup)
+Braille blank U+2800. Copy everything between the quotes.
+
+Single blank:  "⠀"
+3 blanks:  "⠀⠀⠀"
+5 blanks:  "⠀⠀⠀⠀⠀"
+
+READY-MADE DIVIDER ROLES (copy the whole line):
+
+⠀⠀⠀⠀⠀ STAFF ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ ROLES ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ INTERESTS ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ PRONOUNS ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ AGE ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ COLORS ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ NOTIFICATIONS ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ SPECIAL ⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀ BOTS ⠀⠀⠀⠀⠀

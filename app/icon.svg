@@ -1,0 +1,6 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Server Essentials</title>
+  <rect width="64" height="64" rx="16" fill="#161A13"/>
+  <path d="m12 27 20-10 20 10-20 10-20-10Z" fill="#BAFF40"/>
+  <path d="m12 36 20 10 20-10M12 45l20 10 20-10" stroke="#BAFF40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,100 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Generate Next.js route types
+        run: npx next typegen
+      - name: Check TypeScript
+        run: npm run typecheck
+      # Branch pushes are built by Vercel below; PRs build without deployment secrets.
+      - name: Verify production build
+        if: github.event_name == 'pull_request'
+        run: npm run build
+
+  deploy:
+    needs: validate
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Check deployment configuration
+        shell: bash
+        run: |
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub Actions secret: $name. See .github/SETUP.md."
+              exit 1
+            fi
+          done
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel project settings
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF" = 'refs/heads/main' ]; then
+            vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          else
+            vercel pull --yes --environment=preview --git-branch=develop --token="$VERCEL_TOKEN"
+          fi
+      - name: Build for Vercel
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF" = 'refs/heads/main' ]; then
+            vercel build --prod --token="$VERCEL_TOKEN"
+          else
+            vercel build --token="$VERCEL_TOKEN"
+          fi
+      - name: Deploy prebuilt output
+        id: deploy
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF" = 'refs/heads/main' ]; then
+            url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          else
+            url=$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          printf '### Vercel deployment\n\n%s\n' "$url" >> "$GITHUB_STEP_SUMMARY"

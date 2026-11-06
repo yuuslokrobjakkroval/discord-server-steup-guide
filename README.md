@@ -9,3 +9,5 @@ The library presents 274 downloadable files in category tabs, with individual do
 IMPORTANT: The original READ ME prohibits redistributing these assets as-is or uploading them to other sites. This project is for local/private review. Obtain permission from Ethical Studio before publishing the bundled resources. Original attribution and font licenses are retained. The Role Icons folder mentioned in the PDF was not supplied.
 
 Original files remain untouched outside this project. Resource manifests are in lib/resources.json and lib/guides.json; downloadable copies are in public/files and public/bundles.
+
+Release and deployment automation: see [.github/SETUP.md](.github/SETUP.md) for branch behavior, automatic versions, and GitHub/Vercel secrets.
